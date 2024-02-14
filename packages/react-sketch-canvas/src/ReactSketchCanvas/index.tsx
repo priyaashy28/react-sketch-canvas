@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { Canvas, CanvasProps, CanvasRef } from "../Canvas";
 import { CanvasPath, ExportImageType, Point } from "../types";
 
@@ -7,7 +8,7 @@ export interface ReactSketchCanvasProps
   extends Partial<
     Omit<
       CanvasProps,
-      "paths" | "isDrawing" | "onPointerDown" | "onPointerMove" | "onPointerUp"
+      "paths" | "isDrawing"
     >
   > {
   eraserWidth?: number;

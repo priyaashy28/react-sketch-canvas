@@ -1,8 +1,12 @@
 /* eslint-disable react/no-array-index-key */
+/* eslint-disable no-console */
+
 import * as React from "react";
-import { useCallback } from "react";
-import Paths, { SvgPath } from "../Paths";
+
 import { CanvasPath, ExportImageType, Point } from "../types";
+import Paths, { SvgPath } from "../Paths";
+
+import { useCallback } from "react";
 
 const loadImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -24,10 +28,10 @@ function getCanvasWithViewBox(canvas: HTMLDivElement) {
   const width = canvas.offsetWidth;
   const height = canvas.offsetHeight;
 
-  svgCanvas.setAttribute("viewBox", `0 0 ${width} ${height}`);
+ // svgCanvas.setAttribute("viewBox", `0 0 ${width} ${height}`);
 
-  svgCanvas.setAttribute("width", width.toString());
-  svgCanvas.setAttribute("height", height.toString());
+  //svgCanvas.setAttribute("width", width.toString());
+ // svgCanvas.setAttribute("height", height.toString());
   return { svgCanvas, width, height };
 }
 
@@ -103,9 +107,28 @@ export const Canvas = React.forwardRef<CanvasRef, CanvasProps>((props, ref) => {
         return { x: 0, y: 0 };
       }
 
+       console.log("testing from the library*****1******");
+       console.log("x", pointerEvent.pageX - boundingArea.left - scrollLeft);
+       console.log("y", pointerEvent.pageY - boundingArea.top - scrollTop);
+
+       const canvas = canvasRef.current ?? "";
+
+       if (!canvas) {
+        throw Error("Canvas not rendered yet");
+      }
+
+      const {
+        svgCanvas,
+        width,
+        height,
+      } = getCanvasWithViewBox(canvas);
+
+      console.log("testing from the library*****2******");
+      console.log("canvas width", width);
+      console.log("canvas height", height);
       return {
-        x: pointerEvent.pageX - boundingArea.left - scrollLeft,
-        y: pointerEvent.pageY - boundingArea.top - scrollTop,
+        x: pointerEvent.pageX - canvas.offsetLeft - scrollLeft,
+        y: pointerEvent.pageY - canvas.offsetTop - scrollTop,
       };
     },
     []
@@ -328,14 +351,6 @@ release drawing even when point goes out of canvas */
           ...svgStyle,
         }}
         id={id}
-        viewBox={
-          // eslint-disable-next-line no-nested-ternary
-          withViewBox
-            ? canvasSizeRef.current === null
-              ? undefined
-              : `0 0 ${canvasSizeRef.current.width} ${canvasSizeRef.current.height}`
-            : undefined
-        }
       >
         <g id={`${id}__eraser-stroke-group`} display="none">
           <rect
